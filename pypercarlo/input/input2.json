@@ -1,0 +1,16 @@
+{"setts": [
+	{ 
+		"dimension": 2,
+		"latticeXdim": 10,
+		"latticeYdim": 10,
+		"periodicBoundaryConditions": "True",
+		"model": "dipole-dipole",
+		"degOfFreedom": 6,
+		"runMode": "anneal",
+		"Tmin": 2.0,
+		"Tmax": 0.0,
+		"initialiseLatticeType": "ferro"
+}]}
+
+
+

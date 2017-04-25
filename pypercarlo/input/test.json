@@ -1,0 +1,16 @@
+{
+  "settings": [
+    {
+      "Tmax": 0.0, 
+      "Tmin": 2.0, 
+      "degOfFreedom": 6, 
+      "dimension": 2, 
+      "initialiseLatticeType": "ferro", 
+      "latticeXdim": 10, 
+      "latticeYdim": 10, 
+      "model": "dipole-dipole", 
+      "periodicBoundaryConditions": "True", 
+      "runMode": "anneal"
+    }
+  ]
+}

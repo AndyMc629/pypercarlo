@@ -11,7 +11,12 @@ PyPerCarlo (Python Perovskite Monte Carlo): HyPerCarlo gone pythonic!
 """
 import configuration as cfg
 import lattice
-        
+    
+"""
+Will put everything that is in main into a def main(): func
+soon. 
+
+"""
 if __name__ == "__main__":
     conf = cfg.Configuration()
     #conf.loadJSON('./input/input.json')

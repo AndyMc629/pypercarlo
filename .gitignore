@@ -1,4 +1,4 @@
-# C++ gitignore template.
+# C++/python gitignore template.
 # data files #
 ##############
 *.dat
@@ -7,6 +7,15 @@
 *.svg
 *.png
 *.jpg
+*.xml
+*.yaml
+*.zip
+*.tar
+*.gz
+
+# python #
+##########
+*.pyc
 
 # Prerequisites #
 #################

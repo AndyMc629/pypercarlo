@@ -38,9 +38,9 @@ if __name__ == '__main__':
     # DATA ANALYSIS     
     #==============================================================================
     #how to calculate the Binder Ratio within Python:
-    infiles=pyalps.getResultFiles(pattern='ising.L')
+    infiles=pyalps.getResultFiles(pattern='data/ising.L')
 
-    data = pyalps.loadMeasurements(pyalps.getResultFiles(pattern='ising.L*'),['E','m^2', 'm^4'])
+    data = pyalps.loadMeasurements(pyalps.getResultFiles(pattern='data/ising.L*'),['E','m^2', 'm^4'])
     m2 = pyalps.collectXY(data,x='BETA',y='m^2',foreach=['L'])
     m4 = pyalps.collectXY(data,x='BETA',y='m^4',foreach=['L'])
     E = pyalps.collectXY(data,x='BETA',y='E',foreach=['L'])

@@ -79,9 +79,6 @@ class Simulation:
             i = self.randint(self.L)
             j = self.randint(self.L)
             
-            # Measure local energy e = -s_k * sum_{l nn k} s_l
-            # e = self.spins[(i-1+self.L)%self.L][j] + self.spins[(i+1)%self.L][j] + self.spins[i][(j-1+self.L)%self.L] + self.spins[i][(j+1)%self.L]
-            # e *= -self.spins[i][j]
             newSpin = -self.spins[i][j]
             de = self.energyLocal(newSpin, i, j) - self.energyLocal(self.spins[i][j], i, j)
             #de = self.deltaEnergy(i, j)
@@ -89,9 +86,9 @@ class Simulation:
             # Flip s_k with probability exp(2 beta e)
             #if e > 0 or self.rng() < self.exp_table[e]:
             #    self.spins[i][j] = -self.spins[i][j]
-            if de <= 0 or self.rng() < math.exp(-self.beta*de):
-                self.accepted += 1
+            if de < 0 or self.rng() < math.exp(-self.beta*de): #de<=0 breaks the binder plot ...
                 self.spins[i][j] = newSpin
+                self.accepted += 1
                 
     def measure(self):
         E = 0.    # energy

@@ -57,6 +57,7 @@ class Simulation:
         self.abs_magnetization = alpsalea.RealObservable('|m|')
         self.magnetization_2 = alpsalea.RealObservable('m^2')
         self.magnetization_4 = alpsalea.RealObservable('m^4')
+        self.accepted = 0
         
     def save(self, filename):
         pyalps.save_parameters(filename, {'L':self.L, 'BETA':self.beta, 'SWEEPS':self.n, 'THERMALIZATION':self.ntherm})
@@ -98,6 +99,7 @@ class Simulation:
             # Flip s_k with probability exp(2 beta e)
             if e > 0 or self.rng() < self.exp_table[e]:
                 self.spins[i][j] = -self.spins[i][j]
+                self.accepted += 1
                 
     def measure(self):
         E = 0.    # energy
@@ -155,7 +157,9 @@ if __name__ == '__main__':
     plt.ylabel('Binder Cumulant U4 $g$')
     plt.title('2D Ising model')
     plt.legend()
-    plt.show()
+    plt.savefig('alps.pdf')
+    
+    print('Accepted moves:', sim.accepted)
         
 
 

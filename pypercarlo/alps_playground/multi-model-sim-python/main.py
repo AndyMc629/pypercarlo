@@ -35,6 +35,7 @@ if __name__ == '__main__':
     m2=pyalps.collectXY(data,x='BETA',y='m^2',foreach=['L'])
     m4=pyalps.collectXY(data,x='BETA',y='m^4',foreach=['L'])
 
+    m2list = []
     u=[]
     for i in range(len(m2)):
         d = pyalps.DataSet()
@@ -43,11 +44,23 @@ if __name__ == '__main__':
         d.x= m2[i].x
         d.y = m4[i].y/m2[i].y/m2[i].y
         u.append(d)
+        d.y = m2[i].y
+        m2list.append(d)
+        
     
     plt.figure()
     pyalps.plot.plot(u)
+    plt.ylim([1,3.5])
     plt.xlabel('Inverse Temperature $\\beta$')
     plt.ylabel('Binder Cumulant U4 $g$')
     plt.title('2D Ising model')
     plt.legend()
+    plt.savefig('mine.pdf')
+    
+    plt.figure()
+    pyalps.plot.plot(m2list)
+    plt.xlabel('$\\beta$')
+    plt.ylabel('m^2')
+    plt.legend()
     plt.show()
+    print('Accepted moves:', sim.accepted)

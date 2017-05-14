@@ -25,8 +25,9 @@ class Simulation:
         
         # Init exponential map
         self.exp_table = dict()
-        for E in range(-4,5,2): 
+        for E in range(-8,10,4): 
           self.exp_table[E] = math.exp(2*beta*E)
+          #self.exp_table[E] = math.exp(-beta*E) #math.exp(beta*E)
           
         # Init random spin configuration
         self.spins = [ [2*self.randint(2)-1 for j in range(L)] for i in range(L) ]
@@ -37,6 +38,7 @@ class Simulation:
         self.abs_magnetization = alpsalea.RealObservable('|m|')
         self.magnetization_2 = alpsalea.RealObservable('m^2')
         self.magnetization_4 = alpsalea.RealObservable('m^4')
+        self.accepted = 0
         
     def save(self, filename):
         pyalps.save_parameters(filename, {'L':self.L, 'BETA':self.beta, 'SWEEPS':self.n, 'THERMALIZATION':self.ntherm})
@@ -70,12 +72,6 @@ class Simulation:
         e = self.spins[(i-1+self.L)%self.L][j] + self.spins[(i+1)%self.L][j] + self.spins[i][(j-1+self.L)%self.L] + self.spins[i][(j+1)%self.L]
         e *= -spin
         return e
-        
-    def deltaEnergy(self, i, j):
-        #e = self.spins[(i-1+self.L)%self.L][j] + self.spins[(i+1)%self.L][j] + self.spins[i][(j-1+self.L)%self.L] + self.spins[i][(j+1)%self.L]
-        #e *= -self.spins[i][j]
-        deltaE = self.energyLocal(-self.spins[i][j], i, j) - self.energyLocal(self.spins[i][j], i, j) 
-        return deltaE
     
     def step(self):
         for s in range(self.L*self.L):
@@ -86,13 +82,16 @@ class Simulation:
             # Measure local energy e = -s_k * sum_{l nn k} s_l
             # e = self.spins[(i-1+self.L)%self.L][j] + self.spins[(i+1)%self.L][j] + self.spins[i][(j-1+self.L)%self.L] + self.spins[i][(j+1)%self.L]
             # e *= -self.spins[i][j]
-            e = self.deltaEnergy(i, j)
+            newSpin = -self.spins[i][j]
+            de = self.energyLocal(newSpin, i, j) - self.energyLocal(self.spins[i][j], i, j)
+            #de = self.deltaEnergy(i, j)
             
             # Flip s_k with probability exp(2 beta e)
             #if e > 0 or self.rng() < self.exp_table[e]:
             #    self.spins[i][j] = -self.spins[i][j]
-            if e < 0 or self.rng() > self.exp_table[e]:
-                self.spins[i][j] = -self.spins[i][j]
+            if de <= 0 or self.rng() < math.exp(-self.beta*de):
+                self.accepted += 1
+                self.spins[i][j] = newSpin
                 
     def measure(self):
         E = 0.    # energy

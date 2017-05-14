@@ -18,17 +18,21 @@ if __name__ == '__main__':
     #==============================================================================
     # SET UP AND RUN SIMULATION
     #==============================================================================
-    L = 4    # Linear lattice size
+    Lmax = 10    # Linear lattice size
     N = 5000    # of simulation steps
 
-    print '# L:', L, 'N:', N
+    print '# Lmax:', Lmax, 'N:', N
+    model = 'dipole-dipole6'
 
     # Scan beta range [0,1] in steps of 0.1
-    for beta in [0.,.1,.2,.3,.4,.5,.6,.7,.8,.9,1.]:
-        for l in [4,6,8]:
+    #for beta in [0.,.1,.2,.3,.4,.5,.6,.7,.8,.9,1.]:
+    #for beta in [0., .2, .4, .6, .8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]: 
+    for beta in [2.0, 2.5, 3.0, 3.5, 4.0]:    
+        #for l in range(4,Lmax,2):
+            l=Lmax
             print '-----------'
             print 'beta =', beta
-            sim = simulation.Simulation(beta,l, 'Ising')
+            sim = simulation.Simulation(beta,l,model)
             sim.run(N/2,N)
             sim.save('data/ising.L_'+str(l)+'beta_'+str(beta)+'.h5')
     
@@ -70,7 +74,7 @@ if __name__ == '__main__':
     plt.ylabel('Binder Cumulant U4 $g$')
     plt.title('2D Ising model')
     plt.legend()
-    plt.savefig('Binder.pdf')
+    plt.savefig(str(model)+'Lmax_'+str(Lmax)+'Binder.pdf')
     plt.close()
     
     plt.figure()
@@ -79,6 +83,6 @@ if __name__ == '__main__':
     plt.ylabel('E/site')
     plt.title('2D Ising model')
     plt.legend()
-    plt.savefig('Energy.pdf')
+    plt.savefig(str(model)+'Lmax_'+str(Lmax)+'Energy.pdf')
     plt.close()
     

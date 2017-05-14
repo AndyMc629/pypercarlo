@@ -22,5 +22,10 @@ class Spin(object):
         (self.sz*self.sz)
         )
     
+    def dot(self, other):
+        return self.sx*other.sx + self.sy*other.sy + self.sz*other.sz
+        
+    
     def asList(self):
         return [self.sx, self.sy, self.sz]
+    

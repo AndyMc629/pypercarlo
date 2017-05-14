@@ -21,16 +21,49 @@ class Simulation:
     # Seed random number generator: self.rng() will give a random float from the interval [0,1)
     rng = alpstools.rng(42)
     
-    def __init__(self,beta,L):
+    def __init__(self,beta,L, model=None):
         self.L = L
         self.beta = beta
         
-        # Init exponential map
-        self.exp_table = dict()
-        for E in range(-8,10,4): 
-          self.exp_table[E] = math.exp(2*beta*E)
-          #self.exp_table[E] = math.exp(-beta*E) #math.exp(beta*E)
-          
+        def isingH(spin, i, j):
+            e = self.spins[(i-1+self.L)%self.L][j].sz +\
+            self.spins[(i+1)%self.L][j].sz +\
+            self.spins[i][(j-1+self.L)%self.L].sz +\
+            self.spins[i][(j+1)%self.L].sz
+            e *= -spin.sz
+            return e
+        
+        def antiIsingH(spin, i, j):
+            e = self.spins[(i-1+self.L)%self.L][j].sz +\
+            self.spins[(i+1)%self.L][j].sz +\
+            self.spins[i][(j-1+self.L)%self.L].sz +\
+            self.spins[i][(j+1)%self.L].sz
+            e *= spin.sz
+            return e
+        
+        def dipoledipoleH(spin, i, j):
+            
+            rCutOff = 3
+            e = 0
+            for dx in range(-1,2,2):
+                for dy in range(-1,2,2):
+                    if (dx*dx+dy*dy>rCutOff*rCutOff): #hard code for now.
+                        r = math.sqrt( dx*dx + dy*dy )
+                        rvec = spin.Spin(sx=dx, sy=dy, sz=0.0)
+                        e += self.spins[i][j].dot(self.spins[(i+dx)%self.L][(j+dy)%self.L])
+                        e += (self.spins[i][j].dot(rvec))*(self.spins[(i+dx)%self.L][(j+dy)%self.L].dot(rvec)) 
+                        e *= 1.0/(r*r*r)
+                        
+            return e
+            
+        
+        if model == 'Ising':
+            self.energyLocal = isingH
+        elif model == 'AntiFerroIsing':
+            self.energyLocal = antiIsingH
+        elif model == 'dipole-dipole':
+            self.energyLocal = dipoledipoleH
+    
         # Init random spin configuration
         self.spins = [ [spin.Spin(sx=0.0,sy=0.0,sz=2*self.randint(2)-1) for j in range(L)] for i in range(L) ]
         
@@ -69,15 +102,7 @@ class Simulation:
         print 'E:\t', self.energy.mean, '+-', self.energy.error, ',\t tau =', self.energy.tau
         print 'm:\t', self.magnetization.mean, '+-', self.magnetization.error, ',\t tau =', self.magnetization.tau
     
-
-    def energyLocal(self, spin, i, j):
-        e = self.spins[(i-1+self.L)%self.L][j].sz +\
-        self.spins[(i+1)%self.L][j].sz +\
-        self.spins[i][(j-1+self.L)%self.L].sz +\
-        self.spins[i][(j+1)%self.L].sz
-        e *= -spin.sz
-        return e
-    
+     
     def flip(self, spinToFlip):
         return spin.Spin(sx=spinToFlip.sx, sy=spinToFlip.sy, sz=-spinToFlip.sz)
         

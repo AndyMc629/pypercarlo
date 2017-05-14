@@ -1,7 +1,62 @@
-# data #
-########
+# C++/python gitignore template.
+# data files #
+##############
 *.h5
-*.dat
-*.csv
 *.txt
 *.pdf
+*.dat
+*.csv
+*.pdf
+*.svg
+*.png
+*.jpg
+*.xml
+*.yaml
+*.zip
+*.tar
+*.gz
+
+# python #
+##########
+*.pyc
+
+# Prerequisites #
+#################
+*.d
+
+# Compiled Object files #
+#########################
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers #
+#######################
+*.gch
+*.pch
+
+# Compiled Dynamic libraries #
+##############################
+*.so
+*.dylib
+*.dll
+
+# Fortran module files #
+########################
+*.mod
+*.smod
+
+# Compiled Static libraries #
+#############################
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables #
+###############
+*.exe
+*.out
+*.app
+

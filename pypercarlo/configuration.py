@@ -4,7 +4,7 @@ Created on Tue Apr 25 18:01:22 2017
 
 @author: andrew
 
-Configuration class.
+Configuration class. For reading in and outputting JSON config files.
 
 """
 import json

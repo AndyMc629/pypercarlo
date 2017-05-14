@@ -11,7 +11,14 @@ PyPerCarlo (Python Perovskite Monte Carlo): HyPerCarlo gone pythonic!
 """
 import configuration as cfg
 import lattice
-        
+    
+"""
+Will put everything that is in main into a def main(): func
+soon. 
+
+"""
+import csv
+
 if __name__ == "__main__":
     conf = cfg.Configuration()
     #conf.loadJSON('./input/input.json')
@@ -31,8 +38,30 @@ if __name__ == "__main__":
 
     conf.createJSON(test, './input/test.json')
     
-    lat = lattice.Lattice(lengthX=2, lengthY=2)
-    lat.initialiseLattice('ising-antiferro')
+    lat = lattice.Lattice(lengthX=10, lengthY=10)
+    lat.initialiseFerro()
+    lat.visualise('./matt/ferro.pdf')
+    lat.savecsv('./matt/ferro.csv')
     
+    lat.initialiseColAntiFerro()
+    lat.visualise('./matt/colAntiFerro.pdf')
+    lat.savecsv('./matt/colAntiFerro.csv')
+    
+    lat.initialiseAntiFerro()
+    lat.visualise('./matt/antiFerro.pdf')
+    lat.savecsv('./matt/antiFerro.csv')
+    
+<<<<<<< HEAD
     #lat2 = lattice.Lattice(lengthX=3, lengthY=2, lengthZ = 4)
     
+=======
+    """
+    data = []
+    with open('test.csv') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for row in reader:
+            data.append(row)
+            
+    print data
+    """
+>>>>>>> 6ba0d7ebf376fd792dbe5aaaf42e8d4d1abcab79

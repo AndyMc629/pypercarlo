@@ -28,7 +28,7 @@ if __name__ == '__main__':
         for l in [4,6,8]:
             print '-----------'
             print 'beta =', beta
-            sim = simulation.Simulation(beta,l, 'dipole-dipole')
+            sim = simulation.Simulation(beta,l, 'Ising')
             sim.run(N/2,N)
             sim.save('data/ising.L_'+str(l)+'beta_'+str(beta)+'.h5')
     

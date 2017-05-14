@@ -17,6 +17,8 @@ import pyalps.plot
 
 import spin
 
+import random # for direction moves 
+
 class Simulation:
     # Seed random number generator: self.rng() will give a random float from the interval [0,1)
     rng = alpstools.rng(42)
@@ -25,6 +27,9 @@ class Simulation:
         self.L = L
         self.beta = beta
         
+        #==============================================================================
+        # HAMILTONIANS         
+        #==============================================================================
         def isingH(spin, i, j):
             e = self.spins[(i-1+self.L)%self.L][j].sz +\
             self.spins[(i+1)%self.L][j].sz +\
@@ -42,7 +47,6 @@ class Simulation:
             return e
         
         def dipoledipoleH(spin, i, j):
-            
             rCutOff = 3
             e = 0
             for dx in range(-1,2,2):
@@ -56,13 +60,37 @@ class Simulation:
                         
             return e
             
+        #==============================================================================
+        #  SPIN MOVE / FLIP TYPES        
+        #==============================================================================
+        def flip180(spinToFlip):
+            return spin.Spin(sx=spinToFlip.sx, sy=spinToFlip.sy, sz=-spinToFlip.sz)
         
+        self.Potts6LookUp = [[0,0,1], 
+                       [0,0,-1],
+                       [0,1,0],
+                       [0,-1,0],
+                       [1,0,0],
+                       [-1,0,0]]
+        
+        def flipPotts6(spinToFlip):
+            whichVector = self.randint(len(self.Potts6LookUp))
+            sx = self.Potts6LookUp[whichVector][0]
+            sy = self.Potts6LookUp[whichVector][1]
+            sz = self.Potts6LookUp[whichVector][2]
+            
+            return spin.Spin(sx=sx, sy=sy, sz=sz)
+            
+            
         if model == 'Ising':
             self.energyLocal = isingH
+            self.flip = flip180
         elif model == 'AntiFerroIsing':
             self.energyLocal = antiIsingH
-        elif model == 'dipole-dipole':
+            self.flip = flip180
+        elif model == 'dipole-dipole6':
             self.energyLocal = dipoledipoleH
+            self.flip = flipPotts6
     
         # Init random spin configuration
         self.spins = [ [spin.Spin(sx=0.0,sy=0.0,sz=2*self.randint(2)-1) for j in range(L)] for i in range(L) ]
@@ -102,9 +130,6 @@ class Simulation:
         print 'E:\t', self.energy.mean, '+-', self.energy.error, ',\t tau =', self.energy.tau
         print 'm:\t', self.magnetization.mean, '+-', self.magnetization.error, ',\t tau =', self.magnetization.tau
     
-     
-    def flip(self, spinToFlip):
-        return spin.Spin(sx=spinToFlip.sx, sy=spinToFlip.sy, sz=-spinToFlip.sz)
         
     def step(self):
         for s in range(self.L*self.L):

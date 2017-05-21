@@ -17,15 +17,25 @@ import pyalps.plot
 
 import spin
 
-import random # for direction moves 
+#import random # for direction moves 
 
 class Simulation:
     # Seed random number generator: self.rng() will give a random float from the interval [0,1)
     rng = alpstools.rng(42)
     
     def __init__(self,beta,L, model=None):
+        # Init size and temp
         self.L = L
         self.beta = beta
+        # Init random spin configuration
+        self.spins = [ [spin.Spin(sx=0.0,sy=0.0,sz=2*self.randint(2)-1) for j in range(L)] for i in range(L) ]
+        # Init observables
+        self.energy = alpsalea.RealObservable('E')
+        self.magnetization = alpsalea.RealObservable('m')
+        self.abs_magnetization = alpsalea.RealObservable('|m|')
+        self.magnetization_2 = alpsalea.RealObservable('m^2')
+        self.magnetization_4 = alpsalea.RealObservable('m^4')
+        self.accepted = 0
         
         #==============================================================================
         # HAMILTONIANS         
@@ -45,7 +55,7 @@ class Simulation:
             self.spins[i][(j+1)%self.L].sz
             e *= spin.sz
             return e
-        
+        # currently not long-range.
         def dipoledipoleH(spin, i, j):
             rCutOff = 3
             e = 0
@@ -92,16 +102,7 @@ class Simulation:
             self.energyLocal = dipoledipoleH
             self.flip = flipPotts6
     
-        # Init random spin configuration
-        self.spins = [ [spin.Spin(sx=0.0,sy=0.0,sz=2*self.randint(2)-1) for j in range(L)] for i in range(L) ]
         
-        # Init observables
-        self.energy = alpsalea.RealObservable('E')
-        self.magnetization = alpsalea.RealObservable('m')
-        self.abs_magnetization = alpsalea.RealObservable('|m|')
-        self.magnetization_2 = alpsalea.RealObservable('m^2')
-        self.magnetization_4 = alpsalea.RealObservable('m^4')
-        self.accepted = 0
         
     def save(self, filename):
         pyalps.save_parameters(filename, {'L':self.L, 'BETA':self.beta, 'SWEEPS':self.n, 'THERMALIZATION':self.ntherm})
@@ -163,7 +164,23 @@ class Simulation:
         self.abs_magnetization << abs(M)/(self.L*self.L)
         self.magnetization_2 << (M/(self.L*self.L))*(M/(self.L*self.L))
         self.magnetization_4 << (M/(self.L*self.L))*(M/(self.L*self.L))*(M/(self.L*self.L))*(M/(self.L*self.L))
-        
+     
+    def spinsToFile(self, outputFile):
+        if outputFile is None:
+            raise TypeError("Please supply an output file name!")
+        else:
+            f = open(outputFile, 'w')
+            for i in range(self.L):
+                for j in range(self.L):
+                    f.write(str(i)+','+str(j)+','+\
+                            str(self.spins[i][j].sx)+\
+                            str(self.spins[i][j].sy)+\
+                            str(self.spins[i][j].sz)+'\n')
+            f.close()
+            print 'saved spins to '+str(outputFile)
+    
     # Random int from the interval [0,max)
     def randint(self,max):
         return int(max*self.rng())
+    
+    

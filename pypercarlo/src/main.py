@@ -17,32 +17,45 @@ import analyzer
 import matplotlib.pyplot as plt
 import numpy as np
 
+import os
+import datetime
 
 if __name__ == '__main__':
     
     #==============================================================================
     # SET UP AND RUN SIMULATION
     #==============================================================================
-    Lmax = 20    # Linear lattice size, assume cubic
-    N = 5000    # of simulation steps
+
+    data_directory = 'data_' + datetime.datetime.now().strftime("%d_%m_%Y_%H%M%S") + '/'
+
+    if not os.path.exists(data_directory):
+        os.makedirs(data_directory)
+
+    Lmax = 6#20    # Linear lattice size, assume cubic
+    N = 10000#5000    # of simulation steps
 
     print '# Lmax:', Lmax, 'N:', N
-    model = 'dipole-dipole6'
+    #model = 'dipole-dipole6'
+    model = 'Ising'
 
     # Scan beta range [0,1] in steps of 0.1
-    #for beta in [0.,.1,.2,.3,.4,.5,.6,.7,.8,.9,1.]:
+    # FOR ISING
+    for beta in [0.,.1,.2,.3,.4,.5,.6,.7,.8,.9,1.]:
     #for beta in [0., .2, .4, .6, .8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]: 
-    #for beta in [2.0, 2.5, 3.0, 3.5, 4.0]:    
-    for beta in np.arange(1.0, 8.0, 1.0):
+    #for beta in [2.0, 2.5, 3.0, 3.5, 4.0]:
+    # FOR DIPOLE-DIPOLE
+    #for beta in np.arange(1.0, 8.0, 1.0):
         #for l in range(4,Lmax,2):
-            l=Lmax
+        for l in [4, 8, 16]:
+            #l=Lmax
             print '-----------'
             print 'beta =', beta
             print 'l =', l
             sim = simulation.Simulation(beta,l,model)
             sim.run(N,4*N)
-            sim.save('data/'+str(model)+'.L_'+str(l)+'beta_'+str(beta)+'.h5')
-    
+            sim.save(str(data_directory)+str(model)+'.L_'+str(l)+'beta_'+str(beta)+'.h5')
+            sim.spinsToFile(str(data_directory)+str(model)+'.L_'+str(l)+'beta_'+str(beta)+'.csv')
+
     print('Accepted moves:', sim.accepted)
     
     
@@ -52,9 +65,9 @@ if __name__ == '__main__':
     # DATA ANALYSIS     
     #==============================================================================
     #how to calculate the Binder Ratio within Python:
-    resultsDir = 'data/'
-    dataLocationPattern = 'data/'+str(model)
-    
+    resultsDir = data_directory
+    dataLocationPattern = data_directory+str(model)
+
     infiles=pyalps.getResultFiles(pattern=dataLocationPattern)
 
     data = pyalps.loadMeasurements(pyalps.getResultFiles(pattern=dataLocationPattern+'*'),['E','m^2', 'm^4'])

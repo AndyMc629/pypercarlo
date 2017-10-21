@@ -173,8 +173,8 @@ class Simulation:
             for i in range(self.L):
                 for j in range(self.L):
                     f.write(str(i)+','+str(j)+','+\
-                            str(self.spins[i][j].sx)+\
-                            str(self.spins[i][j].sy)+\
+                            str(self.spins[i][j].sx)+','+\
+                            str(self.spins[i][j].sy)+','+\
                             str(self.spins[i][j].sz)+'\n')
             f.close()
             print 'saved spins to '+str(outputFile)
